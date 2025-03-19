@@ -2,17 +2,6 @@
 
 cd "$(dirname "$0")"
 
-# Check for virtual environment and create if not exists
-if [ ! -d ".venv" ]; then
-    echo "Python virtual environment not found. Creating one..."
-    python3 -m venv .venv
-    echo "Installing dependencies..."
-    .venv/bin/pip install -r requirements.txt
-fi
-
-# Activate virtual environment
-source .venv/bin/activate
-
 # Load environment variables
 if [ -f .env ]; then
     export $(cat .env | grep -v '^#' | xargs)
