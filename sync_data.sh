@@ -54,10 +54,15 @@ EOF
 # Create local directory if it doesn't exist
 mkdir -p "$LOCAL_DIR"
 
-# Perform the sync
+# Perform the sync using rclone
 echo "Starting sync from $REMOTE_HOST:$REMOTE_DIR to $LOCAL_DIR"
-rsync -av --links --progress -e "ssh -p $SSH_PORT" \
-    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/" "$LOCAL_DIR/"
+rclone sync "sftp://$REMOTE_USER@$REMOTE_HOST:$SSH_PORT$REMOTE_DIR" "$LOCAL_DIR" \
+    --links \
+    --transfers 8 \
+    --checkers 16 \
+    --buffer-size 32M \
+    --sftp-set-modtime \
+    --progress
 
 # Check if sync was successful
 if [ $? -eq 0 ]; then
