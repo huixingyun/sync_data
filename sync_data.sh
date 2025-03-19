@@ -32,6 +32,7 @@ fi
 send_notification() {
     local subject="$1"
     local message="$2"
+    local hostname=$(hostname)
 
     response=$(
         curl -s -w "\n%{http_code}" -X POST "$WEBHOOK_URL" \
@@ -42,7 +43,7 @@ send_notification() {
     "content": {
         "post": {
             "zh_cn": {
-                "title": "${subject}",
+                "title": "[${hostname}] ${subject}",
                 "content": [
                     [{"tag": "text", "text": "${message}"}]
                 ]
