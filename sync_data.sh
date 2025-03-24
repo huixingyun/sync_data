@@ -56,12 +56,17 @@ mkdir -p "$LOCAL_DIR"
 
 # Perform the sync using rclone
 echo "Starting sync from $REMOTE_HOST:$REMOTE_DIR to $LOCAL_DIR"
-rclone sync "sftp://$REMOTE_USER@$REMOTE_HOST:$SSH_PORT$REMOTE_DIR" "$LOCAL_DIR" \
+RCLONE_SFTP_HOST="$REMOTE_HOST" \
+RCLONE_SFTP_USER="$REMOTE_USER" \
+RCLONE_SFTP_PORT="$SSH_PORT" \
+RCLONE_SFTP_PASS="$RCLONE_SFTP_PASS" \
+rclone sync ":sftp:$REMOTE_DIR" "$LOCAL_DIR" \
     --links \
     --transfers 8 \
     --checkers 16 \
     --buffer-size 32M \
     --sftp-set-modtime \
+    --bwlimit 200M \
     --progress
 
 # Check if sync was successful
