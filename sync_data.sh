@@ -56,8 +56,13 @@ mkdir -p "$LOCAL_DIR"
 
 # Perform the sync
 echo "Starting sync from $REMOTE_HOST:$REMOTE_DIR to $LOCAL_DIR"
-rsync -av --links --progress -e "ssh -p $SSH_PORT" \
-    "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/" "$LOCAL_DIR/"
+if [ -n "$SSH_PRIVATE_KEY" ]; then
+    rsync -av --links --progress -e "ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY -p $SSH_PORT" \
+        "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/" "$LOCAL_DIR/"
+else
+    rsync -av --links --progress -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" \
+        "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/" "$LOCAL_DIR/"
+fi
 
 # Check if sync was successful
 if [ $? -eq 0 ]; then
